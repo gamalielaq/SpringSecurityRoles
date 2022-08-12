@@ -15,8 +15,14 @@ spring:
         hibernate:
             ddl-auto: create
         generate-ddl: false
-
-
+    version: 0.0.3
+#    Evitar que espring maneje esta configuracion cuando no encuentra un recurso
+#    mvc:
+#     throw-exception-if-no-handler-found: true
+#    web:
+#      resources:
+#        add-mappings: false
+     
 
 
 # #Data source 
