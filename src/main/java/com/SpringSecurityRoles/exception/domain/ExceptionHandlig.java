@@ -113,6 +113,11 @@ public class ExceptionHandlig implements ErrorController{
 		return this.createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
 	}
 	
+	@RequestMapping(ERROR_PATH)
+	public ResponseEntity<HttpResponse> notFound404() {
+		return this.createHttpResponse(HttpStatus.NOT_FOUND, "La URL que busca no se encuetra en nuestra base");
+	}
+	
 	private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message){
 		return new ResponseEntity<>(
 				new HttpResponse(
@@ -120,10 +125,4 @@ public class ExceptionHandlig implements ErrorController{
 						),
 				httpStatus);
 	}
-	
-	@RequestMapping(ERROR_PATH)
-	public ResponseEntity<HttpResponse> notFound404() {
-		return this.createHttpResponse(HttpStatus.NOT_FOUND, "La URL que busca no se encuetra en nuestra base");
-	}
-	
 }
