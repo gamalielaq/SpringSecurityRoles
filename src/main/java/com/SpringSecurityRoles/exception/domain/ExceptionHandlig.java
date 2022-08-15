@@ -25,7 +25,7 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 
 
 @RestControllerAdvice
-public class ExceptionHandlig implements ErrorController{
+public class ExceptionHandlig implements ErrorController {
 	//Clase para manejar todas la excepciones
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
@@ -75,7 +75,7 @@ public class ExceptionHandlig implements ErrorController{
 	}
 	
 	@ExceptionHandler(UserNameExistException.class)
-	public ResponseEntity<HttpResponse> userNameExistException(TokenExpiredException exception) {
+	public ResponseEntity<HttpResponse> userNameExistException(UserNameExistException exception) {
 		return this.createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
 	
