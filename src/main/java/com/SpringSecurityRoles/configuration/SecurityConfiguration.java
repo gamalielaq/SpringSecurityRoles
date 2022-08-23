@@ -21,9 +21,9 @@ import com.SpringSecurityRoles.filter.JwtAuhenticatoinEntryPoint;
 import com.SpringSecurityRoles.filter.JwtAuthorizationFilter;
 
 
+// @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = false)
 @Configuration
 @EnableWebSecurity
-// @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = false)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -57,16 +57,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and().authorizeHttpRequests().antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
+            .and()
+            .authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
             .anyRequest().authenticated()
-            .and().exceptionHandling().accessDeniedHandler(this.jwtAccessDniedHandler)
+            .and()
+            .exceptionHandling().accessDeniedHandler(this.jwtAccessDniedHandler)
             .authenticationEntryPoint(this.jwtAuhenticatoinEntryPoint)
-            .and().addFilterBefore(this.jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+            .and()
+            .addFilterBefore(this.jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }    
 }

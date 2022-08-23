@@ -83,7 +83,10 @@ public class UserServiceImp implements IUserService, UserDetailsService {
 
         userRepository.save(user);
 
+        LOGGER.info(password);
         LOGGER.info("Nuevo usuario password: ", password);
+
+        
 
         return user;
     }

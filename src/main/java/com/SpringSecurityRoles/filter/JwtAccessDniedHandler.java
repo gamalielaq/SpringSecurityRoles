@@ -3,7 +3,6 @@ package com.SpringSecurityRoles.filter;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,10 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JwtAccessDniedHandler implements AccessDeniedHandler{
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         
         HttpResponse httpResponse = new HttpResponse(
-            HttpStatus.UNAUTHORIZED.value(),  HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase().toUpperCase(), SecurityConstant.ACCES_DENIED_MESSAGE
+            HttpStatus.UNAUTHORIZED.value(),  HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase().toUpperCase(), SecurityConstant.ACCESS_DENIED_MESSAGE
         );
         
         response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
