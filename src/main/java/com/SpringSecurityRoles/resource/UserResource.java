@@ -26,6 +26,7 @@ import com.SpringSecurityRoles.utility.JWTTokenProvider;
 @RequestMapping(path = { "/", "/user" })
 public class UserResource extends ExceptionHandlig {
 
+    @Autowired
     private IUserService userService;
 
     @Autowired
