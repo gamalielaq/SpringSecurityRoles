@@ -2,6 +2,7 @@ package com.SpringSecurityRoles.service.implement;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.transaction.Transactional;
 
@@ -27,6 +28,7 @@ import com.SpringSecurityRoles.exception.domain.UserNameExistException;
 import com.SpringSecurityRoles.exception.domain.UserNotFoundException;
 import com.SpringSecurityRoles.repository.UserRepository;
 import com.SpringSecurityRoles.service.IUserService;
+import com.SpringSecurityRoles.service.LoginAttemptService;
 
 @Service
 @Transactional
@@ -36,6 +38,9 @@ public class UserServiceImp implements IUserService, UserDetailsService {
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private LoginAttemptService loginAttemptService;
 
     @Autowired
     public UserServiceImp(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
@@ -51,6 +56,7 @@ public class UserServiceImp implements IUserService, UserDetailsService {
             LOGGER.error(UserImplConstant.USER_NOT_FOUND_BY_USERNAME + username);
             throw new UsernameNotFoundException(UserImplConstant.USER_NOT_FOUND_BY_USERNAME + username);
         } else {
+        	this.validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             this.userRepository.save(user);
@@ -60,7 +66,19 @@ public class UserServiceImp implements IUserService, UserDetailsService {
         }
     }
 
-    @Override
+    private void validateLoginAttempt(User user){
+    	if(user.isNotLocked()) {
+    		if(this.loginAttemptService.hasExceedMaxAttempts(user.getUsername())) { // 5 intentos de inicio de sesión
+    			user.setNotLocked(false);
+    		} else {
+    			user.setNotLocked(true);    			
+    		}
+    	} else {
+    		this.loginAttemptService.evicuserFromLoginAttempCache(user.getUsername());
+    	}
+	}
+
+	@Override
     public User register(String firstname, String lastname, String username, String email) throws UserNotFoundException, UserNameExistException, EmailExistException {
         this.validateNewUserNameAndEmail(StringUtils.EMPTY, username, email);
 
@@ -85,9 +103,6 @@ public class UserServiceImp implements IUserService, UserDetailsService {
 
         LOGGER.info(password);
         LOGGER.info("Nuevo usuario password: ", password);
-
-        
-
         return user;
     }
 

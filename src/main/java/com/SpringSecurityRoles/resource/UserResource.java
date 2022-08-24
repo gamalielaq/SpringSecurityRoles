@@ -26,49 +26,17 @@ import com.SpringSecurityRoles.utility.JWTTokenProvider;
 @RequestMapping(path = { "/", "/user" })
 public class UserResource extends ExceptionHandlig {
 
-    // private IUserService userService;
-
-    // @Autowired
-    // private AuthenticationManager authenticationManager;
-
-    // @Autowired
-    // private JWTTokenProvider jwtTokenProvider;
-
-    // @Autowired
-    // public UserResource(AuthenticationManager authenticationManager) {
-    //     this.authenticationManager = authenticationManager;
-    // }
-
-    private AuthenticationManager authenticationManager;
     private IUserService userService;
-    private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserResource(AuthenticationManager authenticationManager, IUserService userService, JWTTokenProvider jwtTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private AuthenticationManager authenticationManager;
 
-
-    @GetMapping("/home")
-    public String showUser() throws EmailExistException {
-        // return "Application works";
-        throw new EmailExistException("Este correo electronico ya esta siendo usado OK");
-    }
-
-    // @PostMapping("/login")
-    // public ResponseEntity<User> login(@RequestBody User user) {
-    //     this.authenticate(user.getUsername(), user.getPassword());
-    //     User loginUser = this.userService.findUserByUserName(user.getUsername());
-    //     UserPrincipal userprincipal = new UserPrincipal(loginUser);
-    //     HttpHeaders jwtheader = getJwtHeader(userprincipal);
-    //     return new ResponseEntity<>(loginUser, jwtheader, HttpStatus.OK);
-    // }
+    @Autowired
+    private JWTTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user) {
-        authenticate(user.getUsername(), user.getPassword());
+        this.authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findUserByUserName(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
@@ -81,6 +49,11 @@ public class UserResource extends ExceptionHandlig {
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
+    @GetMapping("/home")
+    public String showUser() throws EmailExistException {
+        throw new EmailExistException("Este correo electronico ya esta siendo usado OK");
+    }
+    
     private HttpHeaders getJwtHeader(UserPrincipal user) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(SecurityConstant.JWT_TOKEN_HEADER , this.jwtTokenProvider.generateJwtToken(user));
@@ -88,8 +61,7 @@ public class UserResource extends ExceptionHandlig {
     }
 
     private  void authenticate(String username, String password) {
-        // this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
 }
