@@ -1,5 +1,7 @@
 package com.SpringSecurityRoles.resource;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,7 @@ import com.SpringSecurityRoles.utility.JWTTokenProvider;
 @RequestMapping(path = { "/", "/user" })
 public class UserResource extends ExceptionHandlig {
 
+	@Autowired
     private IUserService userService;
 
     @Autowired
@@ -44,7 +47,7 @@ public class UserResource extends ExceptionHandlig {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, UserNameExistException, EmailExistException {
+    public ResponseEntity<User> register(@RequestBody User user) throws UserNotFoundException, UserNameExistException, EmailExistException, MessagingException {
         User newUser = this.userService.register(user.getFirstName(), user.getLastName(), user.getUsername(),user.getEmail());
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }

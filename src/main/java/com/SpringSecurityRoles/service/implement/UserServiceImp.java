@@ -3,6 +3,7 @@ package com.SpringSecurityRoles.service.implement;
 import java.util.Date;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,6 +27,7 @@ import com.SpringSecurityRoles.exception.domain.EmailExistException;
 import com.SpringSecurityRoles.exception.domain.UserNameExistException;
 import com.SpringSecurityRoles.exception.domain.UserNotFoundException;
 import com.SpringSecurityRoles.repository.UserRepository;
+import com.SpringSecurityRoles.service.EmailService;
 import com.SpringSecurityRoles.service.IUserService;
 import com.SpringSecurityRoles.service.LoginAttemptService;
 
@@ -35,18 +37,19 @@ import com.SpringSecurityRoles.service.LoginAttemptService;
 public class UserServiceImp implements IUserService, UserDetailsService {
     
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
+    
+    @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     
     @Autowired
     private LoginAttemptService loginAttemptService;
-
+    
     @Autowired
-    public UserServiceImp(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
+    private EmailService emailService;
+    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userRepository.findUserByUsername(username);
@@ -78,7 +81,7 @@ public class UserServiceImp implements IUserService, UserDetailsService {
 	}
 
 	@Override
-    public User register(String firstname, String lastname, String username, String email) throws UserNotFoundException, UserNameExistException, EmailExistException {
+    public User register(String firstname, String lastname, String username, String email) throws UserNotFoundException, UserNameExistException, EmailExistException, MessagingException {
         this.validateNewUserNameAndEmail(StringUtils.EMPTY, username, email);
 
         User user = new User();
@@ -102,6 +105,7 @@ public class UserServiceImp implements IUserService, UserDetailsService {
 
         LOGGER.info(password);
         LOGGER.info("Nuevo usuario password: ", password);
+        this.emailService.sendNewPasswordEmail(firstname, password, email);
         return user;
     }
 
