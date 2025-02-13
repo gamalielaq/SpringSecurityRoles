@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.SpringSecurityRoles.domain.UserPrincipal;
 import com.SpringSecurityRoles.service.LoginAttemptService;
 
+// AuthenticationSuccessListener ete es un evento que spring dispara o emite automaticamente
 @Component
 public class AuthenticationSuccessListener {
 	
